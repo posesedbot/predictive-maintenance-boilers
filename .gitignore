@@ -1,0 +1,11 @@
+# Python environment and cache files
+venv/
+__pycache__/
+*.pyc
+
+# Jupyter Notebook files
+.ipynb_checkpoints/
+
+# Data and figures (if they get too large)
+data/processed/
+figures/
