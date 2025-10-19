@@ -19,3 +19,9 @@
 * **1. Setup:** Create virtual environment & install requirements (`pip install -r requirements.txt`).
 * **2. Analysis:** Run the analysis notebook in `notebooks/`.
 * **3. Deployment:** Start the FastAPI service in the `api/` folder.
+
+## Next Steps (Week 1)
+
+* Train/test split check for leakage and holdout metrics
+* Minimal FastAPI `/predict` stub (returns prediction + maintenance action)
+* Short LinkedIn TL;DR post announcing baseline results (1–2 lines + repo link)
