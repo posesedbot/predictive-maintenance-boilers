@@ -52,3 +52,12 @@ To run the API locally (after activating your Anaconda environment):
 
 ```bash
 uvicorn api.fastapi_app:app --reload
+
+### CI/CD Safeguard (GitHub Actions)
+
+This repository uses GitHub Actions to ensure code quality and deployment readiness:
+
+* **Enforces a metrics gate** on holdout (recall $\ge 0.95$, precision $\ge 0.90$, F1 $\ge 0.92$).
+* **Runs an API smoke test** against `/predict` to validate the response schema.
+
+CI fails fast if quality drops or the API breaks.
