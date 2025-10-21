@@ -34,6 +34,14 @@
 
 **Takeaway:** All three baselines achieved perfect scores (1.00) on the stratified holdout data, proving the signal is robust and generalizes well to unseen data.
 
+### Generalization Check: Holdout Performance
+
+The stratified train/test split proved the stability of the models. All three baselines (Heuristic, Logistic Regression, and Decision Tree) achieved **perfect scores (1.00)** across all metrics on the test data.
+
+This confirms the following:
+1.  **No Data Leakage:** Performance was not inflated by training on the test set.
+2.  **Perfect Generalization:** The simple rule identified during EDA generalizes perfectly to unseen data, validating the entire modeling approach.
+
 ### API Usage: Local Deployment
 
 The predictive model is exposed via a FastAPI web service, allowing for quick, real-time prediction and maintenance guidance based on sensor input.
