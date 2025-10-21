@@ -1,5 +1,12 @@
 # Predictive Maintenance for Industrial Boilers
 
+## Project Status
+
+[![CI Workflow Status](https://github.com/posesedbot/predictive-maintenance-boilers/actions/workflows/ci.yml/badge.svg)](https://github.com/posesedbot/predictive-maintenance-boilers/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
 ## Problem
 * Goal: Predict boiler failure (binary classification).
 * Business Value: Reduce unplanned downtime and maintenance costs.
@@ -37,6 +44,14 @@
 ### Generalization Check: Holdout Performance
 
 The stratified train/test split proved the stability of the models. All three baselines (Heuristic, Logistic Regression, and Decision Tree) achieved **perfect scores (1.00)** across all metrics on the test data.
+
+This confirms the following:
+1.  **No Data Leakage:** Performance was not inflated by training on the test set.
+2.  **Perfect Generalization:** The simple rule identified during EDA generalizes perfectly to unseen data, validating the entire modeling approach.
+
+### Generalization Check: Holdout Performance
+
+To ensure reliability, models were tested on a held-out portion of data. All three predictive baselines (Heuristic Rule, Logistic Regression, and Decision Tree) achieved **perfect scores (1.00)** across all metrics on the test data.
 
 This confirms the following:
 1.  **No Data Leakage:** Performance was not inflated by training on the test set.
