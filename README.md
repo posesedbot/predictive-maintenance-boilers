@@ -23,5 +23,5 @@
 ## Next Steps (Week 1)
 
 * Train/test split check for leakage and holdout metrics
-* Minimal FastAPI `/predict` stub (returns prediction + maintenance action)
+* Minimal FastAPI /predict stub deployed locally, returning prediction + heuristic-based maintenance action
 * Short LinkedIn TL;DR post announcing baseline results (1–2 lines + repo link)
