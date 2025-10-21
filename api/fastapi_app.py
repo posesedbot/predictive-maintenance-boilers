@@ -1,56 +1,49 @@
-# api/fastapi_app.py
+from fastapi import FastAPI 
+from pydantic import BaseModel 
+ 
+app = FastAPI(title="Predictive Maintenance API") 
+ 
+from pydantic import BaseModel, Field 
 
-from fastapi import FastAPI
-from pydantic import BaseModel
-import numpy as np
-import pickle
+class SensorReadings(BaseModel): 
+  run_hours: float = Field(ge=0, le=50000) 
+  temp_avg: float = Field(ge=-50, le=300) 
+  pressure_avg: float = Field(ge=0, le=100) 
+  vibration: float = Field(ge=0, le=50) 
+def heuristic_predict(run_hours: float, vibration: float) -> int: 
+    return int((run_hours >= 1500) and (vibration > 2.0)) 
+ 
+@app.post("/predict") 
+def predict_failure(readings: SensorReadings): 
+    y_pred = heuristic_predict(readings.run_hours, readings.vibration) 
+    action = ( 
+        "IMMEDIATE SHUTDOWN & INSPECTION. Failure triggered by high Run Hours (>1500 hrs) and high Vibration (>2.0)." 
+        if y_pred == 1 
+        else "No immediate action required. Continue routine monitoring." 
+    ) 
+    # ... (Lines where you apply the heuristic rule and define the 'action' string)
 
-# --- 1. Define the Input Data Structure (Pydantic Model) ---
-# This ensures incoming data is correct
-class SensorReadings(BaseModel):
-    run_hours: float
-    temp_avg: float
-    pressure_avg: float
-    vibration: float
+    # Note: 'y_pred' and 'action' must be defined above this line.
 
-# --- 2. Initialize the FastAPI App ---
-app = FastAPI(title="Boiler Predictive Maintenance API")
+    return { 
+        "prediction": y_pred, 
+        "action_required": action, 
+        "inputs": readings.dict() 
+    } 
+# Nothing else goes inside the predict_failure function after this line!
 
-# NOTE: For a simple, perfect heuristic, we don't need to load the Scikit-learn model,
-# but we will simulate the prediction logic directly for speed and clarity.
-# In a real project, we would save and load the trained DT model here.
+Local smoke test (run these after uvicorn api.fastapi_app:app --reload):
 
-# --- 3. The /predict Endpoint ---
-@app.post("/predict")
-def predict_failure(readings: SensorReadings):
-    """
-    Accepts sensor readings and predicts boiler failure based on the heuristic rule.
-    """
-    
-    # Extract key values for the human-readable rule
-    run_hours = readings.run_hours
-    vibration = readings.vibration
+curl -s -X POST "http://127.0.0.1:8000/predict" \ 
+  -H "Content-Type: application/json" \ 
+  -d '{"run_hours":2000,"temp_avg":95.0,"pressure_avg":6.5,"vibration":2.8}' 
+Expected shape:
 
-    # Apply the Heuristic Rule: Failure if Run Hours >= 1500 AND Vibration > 2.0
-    if run_hours >= 1500 and vibration > 2.0:
-        prediction = 1
-        maintenance_action = "IMMEDIATE SHUTDOWN & INSPECTION. Failure triggered by high Run Hours (>1500 hrs) and high Vibration (>2.0)."
-    else:
-        prediction = 0
-        maintenance_action = "STATUS OK. Below critical failure thresholds."
-
-    return {
-        "prediction": prediction,
-        "action_required": maintenance_action,
-        "run_hours_input": run_hours,
-        "vibration_input": vibration
-    }
-
-# --- 4. OPTIONAL: Root Endpoint ---
-@app.get("/")
-def read_root():
-    return {"status": "Boiler Maintenance API is running."}
-
-# To run this app:
-# 1. Ensure you have activated your environment (source venv/Scripts/activate or Anaconda Prompt)
-# 2. Run: uvicorn api.fastapi_app:app --reload
+{ 
+  "prediction": 1, 
+  "action_required": "IMMEDIATE SHUTDOWN & INSPECTION. Failure triggered by high Run Hours (>1500 hrs) and high Vibration (>2.0).", 
+  "run_hours_input": 2000.0, 
+  "vibration_input": 2.8, 
+  "temp_avg_input": 95.0, 
+  "pressure_avg_input": 6.5 
+} 

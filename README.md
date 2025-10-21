@@ -46,7 +46,7 @@ This confirms the following:
 
 The predictive model is exposed via a FastAPI web service, allowing for quick, real-time prediction and maintenance guidance based on sensor input.
 
-#### Run Server
+#### FastAPI Run Command
 
 To run the API locally (after activating your Anaconda environment):
 
