@@ -48,35 +48,27 @@ def heuristic_predict(run_hours: float, vibration: float) -> int:
 
 
 @app.get("/")
-def read_root() -> dict[str, str]:
-    """Health‑check endpoint returning a simple status message."""
+def root():
     return {"status": "Boiler Maintenance API is running."}
-
 
 @app.post("/predict")
 def predict_failure(readings: SensorReadings) -> dict[str, object]:
-    """Predict whether a boiler needs maintenance based on sensor input.
+    y_pred = heuristic_predict(
+        readings.run_hours,
+        readings.vibration,
+    )
 
-    Args:
-        readings: A validated SensorReadings instance containing run hours,
-            average temperature, average pressure and vibration level.
-
-    Returns:
-        A dictionary with a prediction flag (0 or 1), a human readable action
-        recommendation, and echoes of the inputs for reference.
-    """
-    # Generate a binary prediction using the heuristic rule
-    y_pred = heuristic_predict(readings.run_hours, readings.vibration)
-
-    # Craft the action recommendation to satisfy smoke tests. The success case
-    # must include the phrase "STATUS OK" while the failure case should
-    # include "SHUTDOWN & INSPECTION".
     if y_pred == 1:
         action = (
-            "IMMEDIATE SHUTDOWN & INSPECTION. Failure triggered by high Run Hours (>1500 hrs) "
+            "IMMEDIATE SHUTDOWN & INSPECTION. "
+            "Failure triggered by high Run Hours (>1500 hrs) "
             "and high Vibration (>2.0)."
         )
     else:
-        # In the non‑failure case include the phrase "STATUS OK" followed by a descriptive
-        # message. A colon after the status improves readability and satisfies smoke tests.
         action = "STATUS OK: No immediate action required. Continue routine monitoring."
+
+    return {
+        "prediction": y_pred,
+        "action_required": action,
+        "inputs": readings.dict(),
+    }
