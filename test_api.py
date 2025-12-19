@@ -26,21 +26,42 @@ SUCCESS_PAYLOAD = {
 
 # --- Fixture to Manage the Server Lifecycle ---
 @pytest.fixture(scope="module")
+@pytest.fixture(scope="module")
 def api_server():
-    """Starts the FastAPI server as a background process for testing."""
-    # Command to run your FastAPI app using uvicorn
-    cmd = ["uvicorn", "api.fastapi_app:app", "--host", "127.0.0.1", "--port", "8000"]
-    
-    # Start the server in a new process
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # Wait a few seconds for the server to start up
-    time.sleep(5)
-    
-    # Yield the process object to the test function
+    """
+    Starts the FastAPI server in a background process for CI-safe testing.
+    """
+    cmd = [
+        "python",
+        "-m",
+        "uvicorn",
+        "api.fastapi_app:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+    ]
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    # Wait for server to become available
+    for _ in range(10):
+        try:
+            r = requests.get(BASE_URL + "/")
+            if r.status_code == 200:
+                break
+        except requests.exceptions.ConnectionError:
+            time.sleep(1)
+    else:
+        proc.terminate()
+        raise RuntimeError("API server did not start in time")
+
     yield proc
-    
-    # --- Teardown: Stop the server after tests are done ---
+
     proc.terminate()
     proc.wait()
 
