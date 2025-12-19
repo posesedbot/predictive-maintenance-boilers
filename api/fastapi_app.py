@@ -80,8 +80,3 @@ def predict_failure(readings: SensorReadings) -> dict[str, object]:
         # In the non‑failure case include the phrase "STATUS OK" followed by a descriptive
         # message. A colon after the status improves readability and satisfies smoke tests.
         action = "STATUS OK: No immediate action required. Continue routine monitoring."
-
-    return {
-        "prediction": y_pred,
-        "action_required": action,
-        "inputs": readings.dict(),
