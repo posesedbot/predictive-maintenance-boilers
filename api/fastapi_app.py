@@ -85,16 +85,3 @@ def predict_failure(readings: SensorReadings) -> dict[str, object]:
         "prediction": y_pred,
         "action_required": action,
         "inputs": readings.dict(),
- }curl -s -X POST "http://127.0.0.1:8000/predict" \ 
-  -H "Content-Type: application/json" \ 
-  -d '{"run_hours":2000,"temp_avg":95.0,"pressure_avg":6.5,"vibration":2.8}' 
-Expected shape:
-
-{ 
-  "prediction": 1, 
-  "action_required": "IMMEDIATE SHUTDOWN & INSPECTION. Failure triggered by high Run Hours (>1500 hrs) and high Vibration (>2.0).", 
-  "run_hours_input": 2000.0, 
-  "vibration_input": 2.8, 
-  "temp_avg_input": 95.0, 
-  "pressure_avg_input": 6.5 
-} 
