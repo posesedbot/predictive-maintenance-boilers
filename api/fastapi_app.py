@@ -1,18 +1,5 @@
 """
 FastAPI application exposing a simple heuristic model for predictive maintenance.
-
-The API defines a root endpoint for health checking and a `/predict` endpoint that
-accepts sensor readings and returns a prediction along with a recommended action.
-
-The heuristic is intentionally simple: if the run hours exceed 1500 and the
-vibration exceeds 2.0 units, the model predicts imminent failure. In that
-scenario, the API recommends an immediate shutdown and inspection. Otherwise it
-returns a `STATUS OK` message indicating normal operation.
-
-This module is designed to be minimal and self-contained so that it can be
-deployed via `uvicorn api.fastapi_app:app` without bringing in any external
-dependencies beyond FastAPI and Pydantic (which are specified in
-requirements.txt).
 """
 
 from fastapi import FastAPI
@@ -35,15 +22,7 @@ class SensorReadings(BaseModel):
 
 
 def heuristic_predict(run_hours: float, vibration: float) -> int:
-    """Apply a simple rule to determine if maintenance is required.
-
-    Args:
-        run_hours: Total accumulated operating hours for the boiler.
-        vibration: Average measured vibration level.
-
-    Returns:
-        1 if the run hours exceed 1500 *and* vibration exceeds 2.0, otherwise 0.
-    """
+    """Apply a simple rule to determine if maintenance is required."""
     return int((run_hours >= 1500) and (vibration > 2.0))
 
 
@@ -70,5 +49,6 @@ def predict_failure(readings: SensorReadings) -> dict[str, object]:
     return {
         "prediction": y_pred,
         "action_required": action,
-        "inputs": readings.dict(),
+        # Updated from .dict() to .model_dump() for Pydantic V2 compliance
+        "inputs": readings.model_dump(),
     }
