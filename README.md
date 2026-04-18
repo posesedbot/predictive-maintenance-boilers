@@ -1,78 +1,35 @@
 # Predictive Maintenance for Industrial Boilers
 
 ## Project Status
-
 [![CI Workflow Status](https://github.com/posesedbot/predictive-maintenance-boilers/actions/workflows/ci.yml/badge.svg)](https://github.com/posesedbot/predictive-maintenance-boilers/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## Problem
-* Goal: Predict boiler failure (binary classification).
-* Business Value: Reduce unplanned downtime and maintenance costs.
+## 🏗️ Domain-Driven Engineering
+This project bridges the gap between mechanical reliability and predictive analytics. Drawing from professional experience in boiler maintenance and fabrication, this model focuses on the physical variables—Temperature, Pressure, and Vibration—that dictate industrial uptime.
 
-## Data
-* Source: Synthetic/Public Dataset (CSV format).
-* Key Features: Temperature, Pressure, Vibration, Run Hours, Failure Flag.
+## 🚀 Key Features
+* **Production-Ready API:** Built with **FastAPI**, designed for low-latency integration with SCADA systems or maintenance dashboards.
+* **Automated Quality Gates:** Integrated **GitHub Actions** CI/CD pipeline that enforces strict metric thresholds (Recall ≥ 0.95) before any code is merged.
+* **Explainable Logic:** Includes both heuristic-based baselines and ML models to ensure predictions are interpretable by site engineers.
 
-## Approach
-* **Technology Stack:** Python (3.11+), Git, Pandas, Scikit-learn, FastAPI, Jupyter.
-* Baseline Models: Logistic Regression and Decision Tree.
+## 📊 Performance & Findings
+The model was evaluated using a stratified holdout strategy. All baseline models achieved robust performance, validating the signal in the sensor data.
 
-## Metrics
-* Evaluation: Accuracy, Precision, Recall, and F1 Score (Focus on Recall to minimize missed failures).
+| Metric | Threshold (CI Gate) | Current Result |
+| :--- | :--- | :--- |
+| **Accuracy** | 0.90 | **1.00** |
+| **Precision** | 0.90 | **1.00** |
+| **Recall** | 0.95 | **1.00** |
 
-## How to Run
-* **1. Setup:** Create virtual environment & install requirements (`pip install -r requirements.txt`).
-* **2. Analysis:** Run the analysis notebook in `notebooks/`.
-* **3. Deployment:** Start the FastAPI service in the `api/` folder.
+> **Note on Performance:** The perfect scores reflect the robust signal in the current dataset. The pipeline is architected to be "failure-safe," prioritizing **Recall** to ensure no potential boiler failure goes undetected.
 
 ---
 
-## Findings
+## 🛠️ How to Run
 
-### Baseline Model Comparison
-
-| Metric | Heuristic Rule (Intuition) | Logistic Regression (ML Model) |
-| :--- | :--- | :--- |
-| **Accuracy** | 1.00 | 1.00 |
-| **Precision** | 1.00 | 1.00 |
-| **Recall** | 1.00 | 1.00 |
-
-**Takeaway:** All three baselines achieved perfect scores (1.00) on the stratified holdout data, proving the signal is robust and generalizes well to unseen data.
-
-### Generalization Check: Holdout Performance
-
-The stratified train/test split proved the stability of the models. All three baselines (Heuristic, Logistic Regression, and Decision Tree) achieved **perfect scores (1.00)** across all metrics on the test data.
-
-This confirms the following:
-1.  **No Data Leakage:** Performance was not inflated by training on the test set.
-2.  **Perfect Generalization:** The simple rule identified during EDA generalizes perfectly to unseen data, validating the entire modeling approach.
-
-### Generalization Check: Holdout Performance
-
-To ensure reliability, models were tested on a held-out portion of data. All three predictive baselines (Heuristic Rule, Logistic Regression, and Decision Tree) achieved **perfect scores (1.00)** across all metrics on the test data.
-
-This confirms the following:
-1.  **No Data Leakage:** Performance was not inflated by training on the test set.
-2.  **Perfect Generalization:** The simple rule identified during EDA generalizes perfectly to unseen data, validating the entire modeling approach.
-
-### API Usage: Local Deployment
-
-The predictive model is exposed via a FastAPI web service, allowing for quick, real-time prediction and maintenance guidance based on sensor input.
-
-#### FastAPI Run Command
-
-To run the API locally (after activating your Anaconda environment):
-
+### 1. Setup
+Create a virtual environment and install the required external libraries:
 ```bash
-uvicorn api.fastapi_app:app --reload
-
-### CI/CD Safeguard (GitHub Actions)
-
-This repository uses GitHub Actions to ensure code quality and deployment readiness:
-
-* **Enforces a metrics gate** on holdout (recall $\ge 0.95$, precision $\ge 0.90$, F1 $\ge 0.92$).
-* **Runs an API smoke test** against `/predict` to validate the response schema.
-
-CI fails fast if quality drops or the API breaks.
+pip install -r requirements.txt
